@@ -8,3 +8,5 @@ proyecto para hacer video en youtube
 ~~~
 hola ya si fue verdad
 ~~~
+
+el modificador `private` hace que una parametro sea oculto para otras clases
