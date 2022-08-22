@@ -1,4 +1,4 @@
 ## Descripcion 
-proyecto para haver video en youtube
+proyecto para hacer video en youtube
 
 
