@@ -14,7 +14,7 @@ public class Book {
         this.Precio = precio;
     }
 
-    Book() {
+    public Book() {
         this.BookId = 0;
         this.Nombre = "";
         this.NombreAutor = "";
