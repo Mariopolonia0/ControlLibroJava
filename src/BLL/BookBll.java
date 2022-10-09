@@ -7,6 +7,7 @@ import Model.Book;
 import database.Contexto;
 
 public class BookBll {
+
     static public boolean GuardarBook(Book book) {
         Contexto contexto = new Contexto();
         Boolean guardo = false;
@@ -62,7 +63,7 @@ public class BookBll {
         Book book = new Book();
         try {
             contexto.connect();
-            
+
             String consulta = "SELECT * FROM Books WHERE BookId = " + String.valueOf(bookId);
 
             ResultSet resultSet = contexto.connect.createStatement().executeQuery(consulta);
@@ -72,8 +73,30 @@ public class BookBll {
             book.setPrecio(Double.parseDouble(resultSet.getString("Precio")));
             contexto.close();
         } catch (SQLException ex) {
+            book = null;
             System.err.println(ex.getMessage());
         }
         return book;
+    }
+
+    static public boolean Eliminar(int bookId) {
+        Contexto contexto = new Contexto();
+        String consulta = "DELETE FROM Books WHERE BookId = ?";
+        boolean elimino = false;
+
+        try {
+            contexto.connect();
+            PreparedStatement sql = contexto.connect.prepareStatement(consulta);
+
+            // set the corresponding param
+            sql.setInt(1, bookId);
+            // execute the delete statement
+            sql.executeUpdate();
+            contexto.close();
+            elimino = true;
+        } catch (SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return elimino;
     }
 }
