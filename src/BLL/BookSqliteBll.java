@@ -4,16 +4,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import Model.Book;
-import database.Contexto;
+import database.ContextoSqlite;
 
-public class BookBll {
+public class BookSqliteBll {
 
     static public boolean GuardarBook(Book book) {
-        Contexto contexto = new Contexto();
+        ContextoSqlite contexto = new ContextoSqlite();
         Boolean guardo = false;
+
         try {
-            contexto.connect();
-            PreparedStatement sql = contexto.connect.prepareStatement(
+            PreparedStatement sql = contexto.getConnect().prepareStatement(
                     "insert into Books (BookId,Nombre,NombreAutor,Edicion,Precio) VALUES(?,?,?,?,?)");
             sql.setInt(1, book.getBookId());
             sql.setString(2, book.getNombre());
@@ -27,6 +27,7 @@ public class BookBll {
             guardo = ActualizarBook(book);
             System.err.println(ex.getMessage());
         }
+
         return guardo;
     }
 
@@ -35,14 +36,14 @@ public class BookBll {
     // "Tercera",Precio=60.0
     // WHERE BookId = 1
     static public boolean ActualizarBook(Book book) {
-        Contexto contexto = new Contexto();
+        ContextoSqlite contexto = new ContextoSqlite();
         Boolean guardo = false;
+
         try {
-            contexto.connect();
             String consulta = "UPDATE Books SET Nombre=?, NombreAutor=?, Edicion=?, Precio=?"
                     + "WHERE BookId=?";
 
-            PreparedStatement sql = contexto.connect.prepareStatement(consulta);
+            PreparedStatement sql = contexto.getConnect().prepareStatement(consulta);
             sql.setString(1, book.getNombre());
             sql.setString(2, book.getNombreAutor());
             sql.setString(3, book.getEdicion());
@@ -58,15 +59,13 @@ public class BookBll {
     }
 
     static public Book Buscar(int bookId) {
-        Contexto contexto = new Contexto();
 
+        ContextoSqlite contexto = new ContextoSqlite();
         Book book = new Book();
+
         try {
-            contexto.connect();
-
             String consulta = "SELECT * FROM Books WHERE BookId = " + String.valueOf(bookId);
-
-            ResultSet resultSet = contexto.connect.createStatement().executeQuery(consulta);
+            ResultSet resultSet = contexto.getConnect().createStatement().executeQuery(consulta);
             book.setNombre(resultSet.getString("Nombre"));
             book.setNombreAutor(resultSet.getString("NombreAutor"));
             book.setEdicion(resultSet.getString("Edicion"));
@@ -80,14 +79,13 @@ public class BookBll {
     }
 
     static public boolean Eliminar(int bookId) {
-        Contexto contexto = new Contexto();
+
+        ContextoSqlite contexto = new ContextoSqlite();
         String consulta = "DELETE FROM Books WHERE BookId = ?";
         boolean elimino = false;
 
         try {
-            contexto.connect();
-            PreparedStatement sql = contexto.connect.prepareStatement(consulta);
-
+            PreparedStatement sql = contexto.getConnect().prepareStatement(consulta);
             // set the corresponding param
             sql.setInt(1, bookId);
             // execute the delete statement

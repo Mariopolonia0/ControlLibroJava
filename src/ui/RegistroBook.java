@@ -3,7 +3,9 @@ package ui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import BLL.BookBll;
+
+import BLL.BookMongoDbBLL;
+import BLL.BookSqliteBll;
 import Model.Book;
 
 public class RegistroBook extends JFrame {
@@ -20,7 +22,7 @@ public class RegistroBook extends JFrame {
     private ImageIcon icono;
 
     public RegistroBook() {
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setTitle("Registro Book");
         this.setLayout(null);
         this.setBounds(500, 200, 450, 450);
@@ -119,8 +121,6 @@ public class RegistroBook extends JFrame {
             }
         });
 
-        
-
         eliminar = new JButton("");
         icono = new ImageIcon("src/Resources/EliminarIcono.png");
         eliminar.setIcon(new ImageIcon(icono.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
@@ -138,17 +138,22 @@ public class RegistroBook extends JFrame {
             JOptionPane.showMessageDialog(this, "Hay datos con error", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         Book book = new Book(
                 Integer.parseInt(bookIdTextField.getText()),
                 nombreTextField.getText(),
                 NombreAutorTextField.getText(),
                 EdiccionTextField.getText(),
                 Double.parseDouble(precioTextField.getText()));
-        if (BookBll.GuardarBook(book) == true) {
+
+        if (BookSqliteBll.GuardarBook(book) == true) {
+            BookMongoDbBLL.Guardar(book);
             JOptionPane.showMessageDialog(this, "Libro Guardado", "Información", JOptionPane.INFORMATION_MESSAGE);
             limpiarView();
         } else
             JOptionPane.showMessageDialog(this, "Libro No Guardado", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+           
     }
 
     private void opcionBuscar() {
@@ -161,7 +166,7 @@ public class RegistroBook extends JFrame {
                 return;
             }
 
-            Book book = BookBll.Buscar(Integer.parseInt(bookIdTextField.getText()));
+            Book book = BookSqliteBll.Buscar(Integer.parseInt(bookIdTextField.getText()));
 
             if (book != null) {
                 llenarView(book);
@@ -184,7 +189,7 @@ public class RegistroBook extends JFrame {
             JOptionPane.showMessageDialog(this, "Hay datos con error", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (BookBll.Eliminar(Integer.parseInt(bookIdTextField.getText()))) {
+        if (BookSqliteBll.Eliminar(Integer.parseInt(bookIdTextField.getText()))) {
             JOptionPane.showMessageDialog(this, "Se elimino el libro private " + nombreTextField.getText(), "Información",
                     JOptionPane.INFORMATION_MESSAGE);
             limpiarView();
